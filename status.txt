@@ -8,7 +8,7 @@ SCAN0113.JPG	no (doesnt even run ocr.m)
 SCAN0114.JPG	no (crops correctly, real close to rhs)
 SCAN0115.JPG	no
 SCAN0116.JPG	no
-SCAN0117.JPG	no (ocr breaks)
+SCAN0117.JPG	yes
 SCAN0118.JPG	no (crashes in align.m)
 SCAN0119.JPG	no (crashes in align.m)
 SCAN0123.JPG	no (crashes in align.m)
