@@ -50,13 +50,13 @@ function im_aligned = align(fileName, downSampleFactor)
     
     if num_centers == 0
         disp("no centers found, exiting");
-        im_aligned = im_gray_full_size;
+        im_aligned = 1;
         return
     end
     
     if num_centers < 5
        disp("Found less than 5 centers, exiting");
-       im_aligned = im_gray_full_size;
+       im_aligned = 1;
        return
     end
     x = centers(1, 1);

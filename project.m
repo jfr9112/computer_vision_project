@@ -23,6 +23,11 @@ function project(input_path)
     downSampleFactor = max(round(downSampleFactor), 1);
     
     im_aligned = align(input_path, downSampleFactor);
+    if(im_aligned == 1)
+        disp("No puzzle detected");
+       return 
+    end
+    
     if show_stuff == 1
         close all;
         imshow(im_aligned);
