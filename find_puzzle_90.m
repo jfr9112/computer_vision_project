@@ -1,7 +1,7 @@
 % Assumes the puzzle is rotated by some multiple of 90 degrees from the 
 % desired orientation
 function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
-    show_stuff = 0;
+    show_stuff = 1;
     im_gray_full_size = aligned_gray_image;
     
     im_gray = im_gray_full_size(1:downSampleFactor:end, 1:downSampleFactor:end);
@@ -148,7 +148,7 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
     
     
     
-    % crop_rect = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
+    crop_rect_save = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
     margin_mat = [0, 0, 0, 0];
     rotation_angle = 0;
     switch bottom_indx
@@ -169,6 +169,16 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
             center_extrema(3) = min(bot_centers_x);
             center_extrema(4) = max(bot_centers_x);
             
+            % Left side of bottom is occasionally not far enough left
+            dist_to_centers = abs(center_extrema(1) - centers(:,2));
+            dev = std(dist_to_centers);
+            l_close_centers = dist_to_centers < (1.5 * dev);
+            close_centers = centers(l_close_centers, :);
+            if show_stuff == 1
+                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+            end
+            center_extrema(4) = max(close_centers(:,1));
+            
         case 2
             % Already right side up
             margin_mat = [-other_margin, -top_margin, 2 * other_margin, top_margin + other_margin];
@@ -185,6 +195,16 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
             % Adjust sides to only be based on circles along the bottom
             center_extrema(3) = min(bot_centers_x);
             center_extrema(4) = max(bot_centers_x);
+            
+            % Left side of bottom is occasionally not far enough left
+            dist_to_centers = abs(center_extrema(2) - centers(:,2));
+            dev = std(dist_to_centers);
+            l_close_centers = dist_to_centers < (1.5 * dev);
+            close_centers = centers(l_close_centers, :);
+            if show_stuff == 1
+                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+            end
+            center_extrema(3) = min(close_centers(:,1));
             
         case 3
             % Rotated clockwise
@@ -203,6 +223,16 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
             center_extrema(1) = min(bot_centers_y);
             center_extrema(2) = max(bot_centers_y);
             
+            % Left side of bottom is occasionally not far enough left
+            dist_to_centers = abs(center_extrema(3) - centers(:,1));
+            dev = std(dist_to_centers);
+            l_close_centers = dist_to_centers < (1.5 * dev);
+            close_centers = centers(l_close_centers, :);
+            if show_stuff == 1
+                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+            end
+            center_extrema(1) = min(close_centers(:,2));
+            
         case 4
             % Rotated counterclockwise
             margin_mat = [-top_margin, -other_margin, top_margin + other_margin, 2 * other_margin];
@@ -220,7 +250,18 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
             center_extrema(1) = min(bot_centers_y);
             center_extrema(2) = max(bot_centers_y);
             
+            % Left side of bottom is occasionally not far enough left
+            dist_to_centers = abs(center_extrema(4) - centers(:,1));
+            dev = std(dist_to_centers);
+            l_close_centers = dist_to_centers < (1.5 * dev);
+            close_centers = centers(l_close_centers, :);
+            if show_stuff == 1
+                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+            end
+            center_extrema(2) = max(close_centers(:,2));
     end
+    
+    
     crop_rect = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
     
     if (show_stuff == 1)

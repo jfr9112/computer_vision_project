@@ -25,26 +25,26 @@ SCAN0132.JPG	no					Weekend version ( rotates wrong )
 SCAN0133.JPG	no					Weekend version ( Bad crop and small angle)
 SCAN0134.JPG	no					Weekend version ( rotates wrong )
 SCAN0135.JPG	yes		yes
-SCAN0136.JPG	no					crops too far right because of bottom row offset
+SCAN0136.JPG	yes		yes			
 SCAN0137.JPG	yes		yes
-SCAN0138.JPG	no					crops too far right because of bottom row offset
-SCAN0139.JPG	no					crops too far right because of bottom row offset
+SCAN0138.JPG	yes		yes
+SCAN0139.JPG	yes		yes
 SCAN0140.JPG	no					Weekend version ( crop only shows partial puzzle )
-SCAN0141.JPG	no puzzle detected			Need a hard exit, ocr crash
+SCAN0141.JPG	no puzzle
 SCAN0142.JPG	no					Weekend version ( crop only shows partial puzzle )
-SCAN0143.JPG	no puzzle detected			Need a hard exit, find_puzzle crash
-SCAN0144.JPG	no puzzle detected			Need a hard exit, find_puzzle crash
+SCAN0143.JPG	no puzzle
+SCAN0144.JPG	no puzzle
 SCAN0145.JPG	yes		yes
-SCAN0146.JPG	no					crops too far right because of bottom row offset
-SCAN0147.JPG	no					crops too far right because of bottom row offset
+SCAN0146.JPG	yes		yes
+SCAN0147.JPG	yes		yes
 SCAN0148.JPG	no					Weekend version ( crop only shows partial puzzle )
 SCAN0149.JPG	no					Weekend version ( crop only shows partial puzzle )
 SCAN0150.JPG	yes		yes
-SCAN0151.JPG	no puzzle detected			Need a hard exit, find_puzzle crash
+SCAN0151.JPG	no puzzle 
 SCAN0152.JPG	yes		no			maybe ocr fails due to slight angle?
 SCAN0153.JPG	no					cuts off top, perhaps rounded down to second row?
-SCAN0154.JPG	no					crops too far right because of bottom row offset
-SCAN0155.JPG	no					crops too far right because of bottom row offset
-SCAN0156.JPG	no					crops too far right because of bottom row offset
-SCAN0157.JPG	no					crops too far right because of bottom row offset
-SCAN0158.JPG	no					crops too far right because of bottom row offset
+SCAN0154.JPG	yes		yes
+SCAN0155.JPG	yes		no			maybe ocr fails due to slight angle?
+SCAN0156.JPG	yes		yes
+SCAN0157.JPG	yes		yes
+SCAN0158.JPG	yes		yes
