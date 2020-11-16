@@ -127,7 +127,7 @@ function optical_character_recognition(image_gray)
         
         %   run ocr
         image_word = image_binary(coordinates(i,1,1,2):coordinates(i,1,4,2),coordinates(i,1,1,1):coordinates(i,1,4,1));
-        imshow(image_word);
+        %imshow(image_word);
         ocr_output = ocr(image_word,'TextLayout', 'Word', 'CharacterSet',character_set);
         
         %   remove letters with low confidence
