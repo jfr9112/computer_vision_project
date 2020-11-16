@@ -2,7 +2,7 @@
 % desired orientation
 function im_aligned = align(fileName, downSampleFactor)
     im_rgb = im2double(imread(fileName));
-    
+    %im_rgb = imrotate(im_rgb, 90 * 0);
     imshow(im_rgb);
     im_gray_full_size = im_rgb(:,:,2); % Green channel
     
@@ -21,7 +21,7 @@ function im_aligned = align(fileName, downSampleFactor)
     
     %b_im_opened = b_im_opened_h & b_im_opened_v;
     b_im_opened = b_im;
-    tic
+    %tic
     
     % Radius range
     % A = 4960 * 6864
@@ -32,24 +32,32 @@ function im_aligned = align(fileName, downSampleFactor)
     % any given image is approximately the same amount of newspaper.
     area = im_width * im_height;
     min_rad = round( ( (55 * sqrt(area)) / sqrt(4960 * 6864) ) );
-    max_rad = round( ( (85 * sqrt(area)) / sqrt(4960 * 6864) ) );
+    %max_rad = round( ( (85 * sqrt(area)) / sqrt(4960 * 6864) ) );
+    max_rad = round( ( (120 * sqrt(area)) / sqrt(4960 * 6864) ) );
     
     
     [centers, radii, metric] = imfindcircles(~b_im_opened, [min_rad, max_rad], 'Sensitivity', 0.84);
-    toc
+    %toc
     
     
     
-    imshow(b_im_opened);
-    hold on;
-    viscircles(centers, radii, 'EdgeColor', 'r');
+    %imshow(b_im_opened);
+    %hold on;
+    %viscircles(centers, radii, 'EdgeColor', 'r');
+    
     % disp(size(centers));
     [num_centers, ignore] = size(centers);
     
     if num_centers == 0
         disp("no centers found, exiting");
-        im_aligned = im_gray;
+        im_aligned = im_gray_full_size;
         return
+    end
+    
+    if num_centers < 5
+       disp("Found less than 5 centers, exiting");
+       im_aligned = im_gray_full_size;
+       return
     end
     x = centers(1, 1);
     y = centers(1, 2);
@@ -74,13 +82,13 @@ function im_aligned = align(fileName, downSampleFactor)
         end
     end
     
-    line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'green');
-    line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'green');
+    %line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'green');
+    %line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'green');
     
-    line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'green');
-    line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'green');
+    %line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'green');
+    %line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'green');
     
-   num_on_extrema = [0,0,0,0];
+    num_on_extrema = [0,0,0,0];
     for center_num = 1:num_centers
         c_x = centers( center_num, 1 );
         c_y = centers( center_num, 2 );
@@ -102,7 +110,7 @@ function im_aligned = align(fileName, downSampleFactor)
         end
     end
     
-    disp(num_on_extrema)
+    %disp(num_on_extrema)
     
     l_bottom_indx = max(num_on_extrema) == num_on_extrema;
     bottom_indx = find(l_bottom_indx, 1, 'first');
@@ -169,9 +177,52 @@ function im_aligned = align(fileName, downSampleFactor)
         min_small = min(bot_centers_x);
     end
     
-    small_angle = 90 - rad2deg(atan((max_big - min_big)/(max_small - min_small)));
+    angle_direction = 1;
+    %bottom_indx
+    switch(bottom_indx)
+        case(1)
+            % Up side down
+            check_center = [min_big min_small];
+            l_is_center = ismember(centers, check_center, 'rows');
+            n = sum(l_is_center(:));
+            if n == 0
+                angle_direction = -1;
+            end
+            
+        case(2)
+            % Right side up
+            check_center = [min_big min_small];
+            l_is_center = ismember(centers, check_center, 'rows');
+            n = sum(l_is_center(:));
+            if n == 0
+                angle_direction = -1;
+            end
+            
+        case(3)
+           % Rotated 90 degrees CCW
+            check_center = [min_small min_big];
+            l_is_center = ismember(centers, check_center, 'rows');
+            n = sum(l_is_center(:));
+            if n == 1
+                angle_direction = -1;
+            end
+            
+        case(4)
+            % Rotated 90 degrees CW
+            check_center = [min_small min_big];
+            l_is_center = ismember(centers, check_center, 'rows');
+            n = sum(l_is_center(:));
+            if n == 1
+                angle_direction = -1;
+            end
+    end
+        
     
-    im_aligned = imrotate(im_gray_full_size, small_angle, 'nearest', 'crop');     
+    
+    small_angle = 90 - rad2deg(atan((max_big - min_big)/(max_small - min_small)));
+    angle = small_angle * angle_direction;
+    
+    im_aligned = imrotate(im_gray_full_size, angle , 'nearest', 'crop');     
 end
 
 

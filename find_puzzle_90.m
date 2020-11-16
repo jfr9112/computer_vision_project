@@ -1,6 +1,7 @@
 % Assumes the puzzle is rotated by some multiple of 90 degrees from the 
 % desired orientation
 function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
+    show_stuff = 0;
     im_gray_full_size = aligned_gray_image;
     
     im_gray = im_gray_full_size(1:downSampleFactor:end, 1:downSampleFactor:end);
@@ -16,7 +17,7 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
 %     b_im_opened_v = imopen(b_im, structuring_element_v);
 %     
 %     b_im_opened = b_im_opened_h & b_im_opened_v;
-    tic
+    %tic
     
     % Radius range
     % A = 4960 * 6864
@@ -27,17 +28,19 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
     % any given image is approximately the same amount of newspaper.
     area = im_width * im_height;
     min_rad = round( ( (55 * sqrt(area)) / sqrt(4960 * 6864) ) );
-    max_rad = round( ( (85 * sqrt(area)) / sqrt(4960 * 6864) ) );
+    max_rad = round( ( (120 * sqrt(area)) / sqrt(4960 * 6864) ) );
     
     
     [centers, radii, metric] = imfindcircles(~b_im, [min_rad, max_rad], 'Sensitivity', 0.84);
-    toc
+    %toc
     
     
     
-     imshow(b_im);
-     hold on;
-     viscircles(centers, radii, 'EdgeColor', 'r');
+    if show_stuff == 1
+        imshow(b_im);
+        hold on;
+        viscircles(centers, radii, 'EdgeColor', 'r');
+    end
     % disp(size(centers));
     [num_centers, ignore] = size(centers);
     x = centers(1, 1);
@@ -63,12 +66,13 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
         end
     end
     
-    line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'green');
-    line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'green');
-    
-    line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'green');
-    line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'green');
-    
+    if(show_stuff == 1)
+        line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'green');
+        line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'green');
+        
+        line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'green');
+        line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'green');
+    end
     num_on_extrema = [0,0,0,0];
     for center_num = 1:num_centers
         c_x = centers( center_num, 1 );
@@ -95,7 +99,7 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
     bottom_indx = find(l_bottom_indx, 1, 'first');
     
     
-    crop_rect = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
+    
    % Distance from top cirlce to top of puzzle
     % needs to be in terms of circle radii
     avg_radii = mean(radii);
@@ -104,6 +108,47 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
     % Distance from other extrema circles to corresponding edge of puzzle
     other_margin = (100/65) * avg_radii;
     
+    % The top circle is (experimentally) 19 radii above the bottom circle
+    top2bot = 20;
+    
+    % Need to adjust slight angles
+    bot_centers_x = [];
+    bot_centers_y = [];
+    hit = 0;
+    for center_num = 1:num_centers
+        c_x = centers( center_num, 1 );
+        c_y = centers( center_num, 2 );
+        switch(bottom_indx)
+            case(1)
+                if (c_y < center_extrema(1)+50) && (c_y > center_extrema(1) - 50)
+                    hit = 1;
+                end
+                
+            case(2)
+                if (c_y < center_extrema(2)+50) && (c_y > center_extrema(2) - 50)
+                    hit = 1;
+                end
+                
+            case(3)
+                if (c_x < center_extrema(3)+50) && (c_x > center_extrema(3) - 50)
+                    hit = 1;
+                end
+                
+            case(4)
+                if (c_x < center_extrema(4)+50) && (c_x > center_extrema(4) - 50)
+                    hit = 1;
+                end
+        end
+        if hit == 1
+           bot_centers_x( end + 1 ) = c_x;
+           bot_centers_y( end + 1 ) = c_y;
+        end
+        hit = 0;
+    end
+    
+    
+    
+    % crop_rect = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
     margin_mat = [0, 0, 0, 0];
     rotation_angle = 0;
     switch bottom_indx
@@ -111,27 +156,88 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
             % Upside down
             margin_mat = [-other_margin, -other_margin, 2 * other_margin, top_margin + other_margin];
             rotation_angle = 180;
+            
+            % Adjust top end to be based on distance from bottom, rather
+            % than highest circle
+            center_extrema(2) = center_extrema(1) + (top2bot * avg_radii);
+            dist_from_centers = abs(centers(:,2) - center_extrema(2));
+            target = min(dist_from_centers);
+            cntr_indx = find(dist_from_centers == target, 1, 'first');
+            center_extrema(2) = centers(cntr_indx,2);
+            
+            % Adjust sides to only be based on circles along the bottom
+            center_extrema(3) = min(bot_centers_x);
+            center_extrema(4) = max(bot_centers_x);
+            
         case 2
             % Already right side up
             margin_mat = [-other_margin, -top_margin, 2 * other_margin, top_margin + other_margin];
             rotation_angle = 0;
+            
+            % Adjust top end to be based on distance from bottom, rather
+            % than highest circle
+            center_extrema(1) = center_extrema(2) - (top2bot * avg_radii);
+            dist_from_centers = abs(centers(:,2) - center_extrema(1));
+            target = min(dist_from_centers);
+            cntr_indx = find(dist_from_centers == target, 1, 'first');
+            center_extrema(1) = centers(cntr_indx,2);
+            
+            % Adjust sides to only be based on circles along the bottom
+            center_extrema(3) = min(bot_centers_x);
+            center_extrema(4) = max(bot_centers_x);
+            
         case 3
             % Rotated clockwise
             margin_mat = [-other_margin, -other_margin, top_margin + other_margin, 2 * other_margin];
             rotation_angle = 270;
+            
+            % Adjust top end to be based on distance from bottom, rather
+            % than highest circle
+            center_extrema(4) = center_extrema(3) + (top2bot * avg_radii);
+            dist_from_centers = abs(centers(:,1) - center_extrema(4));
+            target = min(dist_from_centers);
+            cntr_indx = find(dist_from_centers == target, 1, 'first');
+            center_extrema(4) = centers(cntr_indx,1);
+            
+            % Adjust sides to only be based on circles along the bottom
+            center_extrema(1) = min(bot_centers_y);
+            center_extrema(2) = max(bot_centers_y);
+            
         case 4
             % Rotated counterclockwise
             margin_mat = [-top_margin, -other_margin, top_margin + other_margin, 2 * other_margin];
             rotation_angle = 90;
             
+            % Adjust top end to be based on distance from bottom, rather
+            % than highest circle
+            center_extrema(3) = center_extrema(4) - (top2bot * avg_radii);
+            dist_from_centers = abs(centers(:,1) - center_extrema(3));
+            target = min(dist_from_centers);
+            cntr_indx = find(dist_from_centers == target, 1, 'first');
+            center_extrema(3) = centers(cntr_indx,1);
+            
+            % Adjust sides to only be based on circles along the bottom
+            center_extrema(1) = min(bot_centers_y);
+            center_extrema(2) = max(bot_centers_y);
+            
+    end
+    crop_rect = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
+    
+    if (show_stuff == 1)
+        line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'red');
+        line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'red');
+        
+        line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'magenta');
+        line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'cyan');
     end
     
-    crop_parameter = crop_rect + margin_mat
-    
+    crop_parameter = crop_rect + margin_mat;
     
     im_cropped = imcrop(im_gray_full_size, downSampleFactor * crop_parameter);
     im_puzzle = imrotate(im_cropped, -rotation_angle);
+    if (show_stuff == 1)
+        hold off;
+        imshow(im_puzzle);
+    end
     
-    %hold off;
-    %imshow(im_puzzle);
 end

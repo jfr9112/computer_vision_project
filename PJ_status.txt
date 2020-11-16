@@ -1,0 +1,50 @@
+file_name	cropping	ocr			notes
+
+SCAN0107.JPG	yes		misses a letter
+SCAN0108.JPG	yes		yes
+SCAN0109.JPG	yes		no
+SCAN0110.JPG	yes		no
+SCAN0111.JPG	yes		no
+SCAN0112.JPG	yes		yes
+SCAN0113.JPG	yes		no
+SCAN0114.JPG	yes		yes
+SCAN0115.JPG	yes		yes
+SCAN0116.JPG	yes		no
+SCAN0117.JPG	yes		yes
+SCAN0118.JPG	yes		no			maybe ocr fails due to slight angle?
+SCAN0119.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0123.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0124.JPG	no					Weekend version ( rotates wrong )
+SCAN0125.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0126.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0128.JPG	no					Weekend version ( scan does not contain bottom row or circles )
+SCAN0129.JPG	no					Weekend version ( rotates wrong )	
+SCAN0130.JPG	no					Weekend version ( rotates wrong )
+SCAN0131.JPG	no					Weekend version ( rotates wrong )
+SCAN0132.JPG	no					Weekend version ( rotates wrong )
+SCAN0133.JPG	no					Weekend version ( Bad crop and small angle)
+SCAN0134.JPG	no					Weekend version ( rotates wrong )
+SCAN0135.JPG	yes		yes
+SCAN0136.JPG	no					crops too far right because of bottom row offset
+SCAN0137.JPG	yes		yes
+SCAN0138.JPG	no					crops too far right because of bottom row offset
+SCAN0139.JPG	no					crops too far right because of bottom row offset
+SCAN0140.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0141.JPG	no puzzle detected			Need a hard exit, ocr crash
+SCAN0142.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0143.JPG	no puzzle detected			Need a hard exit, find_puzzle crash
+SCAN0144.JPG	no puzzle detected			Need a hard exit, find_puzzle crash
+SCAN0145.JPG	yes		yes
+SCAN0146.JPG	no					crops too far right because of bottom row offset
+SCAN0147.JPG	no					crops too far right because of bottom row offset
+SCAN0148.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0149.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0150.JPG	yes		yes
+SCAN0151.JPG	no puzzle detected			Need a hard exit, find_puzzle crash
+SCAN0152.JPG	yes		no			maybe ocr fails due to slight angle?
+SCAN0153.JPG	no					cuts off top, perhaps rounded down to second row?
+SCAN0154.JPG	no					crops too far right because of bottom row offset
+SCAN0155.JPG	no					crops too far right because of bottom row offset
+SCAN0156.JPG	no					crops too far right because of bottom row offset
+SCAN0157.JPG	no					crops too far right because of bottom row offset
+SCAN0158.JPG	no					crops too far right because of bottom row offset
