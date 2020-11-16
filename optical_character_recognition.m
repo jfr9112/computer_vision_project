@@ -1,18 +1,15 @@
-function optical_character_recognition()
+function optical_character_recognition(image_gray)
 
     
-   
-    path = 'C:\Users\jonat\Documents\rit\2020_2021_fall\introduction_to_computer_vision\Project\project_git\puzzle_small_0107.jpg';
-    image_gray = im2double(imread(path));
+
+    %path = 'C:\Users\jonat\Documents\rit\2020_2021_fall\introduction_to_computer_vision\Project\project_git\puzzle_small_0107.jpg';
+    %image_gray = im2double(imread(path));
     image_binary = image_gray < 0.65;
 
     
     [H,T,R] = hough(image_binary);
     P  = houghpeaks(H,100);
     lines = houghlines(image_binary,T,R,P,'FillGap',5,'MinLength',50);
-    
-    max_number_of_words=6;
-    max_number_of_letters=6;
    
     %   count number of horizontal lines
     count = 0;
@@ -120,31 +117,125 @@ function optical_character_recognition()
 %             plot(A,B);
 %         end
 %     end
+%     
+%     input('');
 
     character_set = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-
+    
+    words_scrambled = strings(size(coordinates,1),1);
     for i=1:size(coordinates)
+        
+        %   run ocr
         image_word = image_binary(coordinates(i,1,1,2):coordinates(i,1,4,2),coordinates(i,1,1,1):coordinates(i,1,4,1));
-        %imshow(image_word);
-        word = ocr(image_word,'TextLayout', 'Word', 'CharacterSet',character_set);
-        word = word.Text;
+        imshow(image_word);
+        ocr_output = ocr(image_word,'TextLayout', 'Word', 'CharacterSet',character_set);
+        
+        %   remove letters with low confidence
+        word = ocr_output.Text;
+        confidence = ocr_output.CharacterConfidences;
+        for j= 1:size(word,2)
+            if(~isnan(confidence(j)))
+                if(confidence(j)<0.3)
+                    word(j)=' ';
+                end
+            end
+        end
+
         word = strtrim(word);
-        %disp(word.Text);
-        fprintf("word: %s\n",word)
-        %input('');
+        words_scrambled(i)=word;
     end
     
+    
+    
+    words_solved = solve_words(words_scrambled);
+    %disp(words_solved);
+    
+    %   writed solved words on image
+    for i=1:size(coordinates)
+
+        %   offset words of length 5
+        word = char(words_solved(i));
+        offset = 1;
+        if(size(word,2)==5)
+            offset = 2;
+        end
+        
+        for j=1:size(word,2)
+            
+            %   get coordinates of top-left vertex of rectangle
+            index = j + offset;
+            position = [coordinates(i,index,1,1),coordinates(i,index,1,2)];
+            
+            %   write letter on image
+            image_gray = insertText(image_gray,position,word(j));
+        end
+    end
+    
+    %   output
+    imshow(image_gray);
+    
+end
+
+function words_solved = solve_words(words_scrambled)
+    
+    %   return array of strings
+    words_solved = words_scrambled(:);
+    
+    %   two dictionaries consisting of words of lengths 5 or 6
+    path_i = 'roth_words_i.txt';
+    path_ii = 'roth_words_ii.txt';
+    dictionary_i = readcell(path_i,'TextType','string');
+    dictionary_ii = readcell(path_ii,'TextType','string');
 
     
-    
-    
-    
-    %disp(coordinates);
-    %disp(size(image_gray));
-    
-
-    
- 
-
-
+    %   iterate through scambled words
+    for i = 1:length(words_scrambled)
+        
+        %   the scrambled word
+        word = char(words_scrambled(i));
+        
+        %   determine dictionary
+        dictionary = dictionary_i;
+        if(size(word,2)==6)
+            dictionary = dictionary_ii;
+        end
+        
+        %   compare against every entry in dictionary
+        template = zeros(size(word,2),1,'logical')+1;
+        for ii = 1:size(dictionary)
+            
+            %   the comparison
+            compare = dictionary(ii);
+            compare = compare{1};
+            compare = char(compare);
+            
+            %   if every letter in the comparison corresponds to a letter
+            %   in word, then we have found the solution
+            
+            %   iterate though letters in comparison
+            yeah = template(:);
+            flag_ii = 1;
+            for iii = 1:size(compare,2)
+                flag_iii = 0;
+                
+                %   iterate through letters in word
+                for iv = 1:size(compare,2)
+                    if(compare(iii)==word(iv))
+                        if(yeah(iv))
+                            yeah(iv)=0;
+                            flag_iii=1;
+                            break
+                        end
+                    end
+                end
+                if(flag_iii==0)
+                    flag_ii=0;
+                   break
+                end
+            end
+            if(flag_ii)
+                words_solved(i)=compare;
+            end
+        end
+    end
 end
