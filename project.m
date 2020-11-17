@@ -25,7 +25,7 @@ function project(input_path)
     im_aligned = align(input_path, downSampleFactor);
     if(im_aligned == 1)
         disp("No puzzle detected");
-       return 
+        return 
     end
     
     if show_stuff == 1
@@ -35,14 +35,21 @@ function project(input_path)
     
     
     hold off;
-    im_puzzle = find_puzzle_90(im_aligned, downSampleFactor);
+    [im_puzzle, weekend] = find_puzzle_90(im_aligned, downSampleFactor);
     if show_stuff == 1
         close all;
         imshow(im_puzzle);
     end
     
     [h, w] = size(im_puzzle);
-    im_small = im_puzzle(  round(0.1816 * h):round(0.85 * h), 1:round(0.5 * w), : );
+    top = 0.1816;
+    bot = 0.85;
+    right = 0.5;
+    if (weekend == 1)
+       right = 0.45;
+       top = 0.145;
+    end
+    im_small = im_puzzle(  round(top * h):round(bot * h), 1:round(right * w), : );
     if show_stuff == 1
         close all;
         imshow(im_small);

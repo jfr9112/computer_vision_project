@@ -1,6 +1,6 @@
 % Assumes the puzzle is rotated by some multiple of 90 degrees from the 
 % desired orientation
-function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
+function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFactor)
     show_stuff = 1;
     im_gray_full_size = aligned_gray_image;
     
@@ -98,20 +98,7 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
     l_bottom_indx = max(num_on_extrema) == num_on_extrema;
     bottom_indx = find(l_bottom_indx, 1, 'first');
     
-    
-    
-   % Distance from top cirlce to top of puzzle
-    % needs to be in terms of circle radii
-    avg_radii = mean(radii);
-    
-    top_margin = 10 * avg_radii;
-    % Distance from other extrema circles to corresponding edge of puzzle
-    other_margin = (100/65) * avg_radii;
-    
-    % The top circle is (experimentally) 19 radii above the bottom circle
-    top2bot = 20;
-    
-    % Need to adjust slight angles
+    % Count number of circles along the bottom row
     bot_centers_x = [];
     bot_centers_y = [];
     hit = 0;
@@ -145,6 +132,28 @@ function im_puzzle = find_puzzle_90(aligned_gray_image, downSampleFactor)
         end
         hit = 0;
     end
+    
+    num_bot_centers = size(bot_centers_x);
+    weekend = 0;
+    if(num_bot_centers(2) > 12)
+        disp("This is a weekend puzzle")
+        weekend = 1;
+    end
+    
+    % Distance from top cirlce to top of puzzle
+    % needs to be in terms of circle radii
+    avg_radii = mean(radii);
+    
+    top_margin = 10 * avg_radii;
+    % Distance from other extrema circles to corresponding edge of puzzle
+    other_margin = (100/65) * avg_radii;
+    
+    % The top circle is (experimentally) 19 radii above the bottom circle
+    top2bot = 20;
+    if (weekend == 1)
+       top2bot = 32;
+    end
+    
     
     
     

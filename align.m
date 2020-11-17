@@ -154,6 +154,21 @@ function im_aligned = align(fileName, downSampleFactor)
         hit = 0;
     end
     
+    num_bot_centers = size(bot_centers_x);
+    disp(num_bot_centers);
+%     
+%     weekend = 0;
+%     if(num_bot_centers(2) > 12)
+%         disp("This is a weekend puzzle")
+%         weekend = 1;
+%     end
+
+    if num_bot_centers(2) < 5
+       disp("Found less than 5 centers in the bottom row, exiting");
+       im_aligned = 1;
+       return
+    end
+    
     standard_dev_x = std(bot_centers_x);
     standard_dev_y = std(bot_centers_y);
     
@@ -217,12 +232,12 @@ function im_aligned = align(fileName, downSampleFactor)
             end
     end
         
-    
-    
     small_angle = 90 - rad2deg(atan((max_big - min_big)/(max_small - min_small)));
     angle = small_angle * angle_direction;
     
-    im_aligned = imrotate(im_gray_full_size, angle , 'nearest', 'crop');     
+    im_aligned = imrotate(im_gray_full_size, angle , 'nearest', 'crop');
+    %im_aligned = [im_aligned weekend];
+    %im_and_weekend
 end
 
 
