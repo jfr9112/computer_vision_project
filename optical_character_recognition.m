@@ -9,21 +9,37 @@ function optical_character_recognition(image_gray)
     
     [H,T,R] = hough(image_binary);
     P  = houghpeaks(H,100);
-    lines = houghlines(image_binary,T,R,P,'FillGap',5,'MinLength',50);
+    lines = houghlines(image_binary,T,R,P,'FillGap',1,'MinLength',50);
    
+    
+    
     %   count number of horizontal lines
     count = 0;
+    figure, imshow(image_gray), hold on
     for k=1:length(lines)
+        
         xy = [lines(k).point1; lines(k).point2];
+        
+        
+        plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+        plot(xy(1,1),xy(1,2),'x','LineWidth',2,'Color','yellow');
+        plot(xy(2,1),xy(2,2),'x','LineWidth',2,'Color','red');
+        
         if(xy(1,1)==xy(2,1))
             continue;
         end
         count = count + 1;
     end
+    input('press enter');
     %a=xy(1,1);%x1
     %b=xy(1,2);%y1
     %c=xy(2,1);%x2
     %d=xy(2,2);%y2
+    
+    
+    
+    
+    
     
 
     %   will contain all relevant coordinates
@@ -126,13 +142,22 @@ function optical_character_recognition(image_gray)
     for i=1:size(coordinates)
         
         %   run ocr
-        image_word = image_binary(coordinates(i,1,1,2):coordinates(i,1,4,2),coordinates(i,1,1,1):coordinates(i,1,4,1));
+        %image_word = image_binary(coordinates(i,1,1,2):coordinates(i,1,4,2),coordinates(i,1,1,1):coordinates(i,1,4,1));
         %imshow(image_word);
+        %ocr_output = ocr(image_word,'TextLayout', 'Word', 'CharacterSet',character_set);
+        
+        image_word = image_gray(coordinates(i,1,1,2)+10:coordinates(i,1,4,2)-10,coordinates(i,1,1,1)+75:coordinates(i,1,4,1)-75);
+        imshow(image_word);
         ocr_output = ocr(image_word,'TextLayout', 'Word', 'CharacterSet',character_set);
         
         %   remove letters with low confidence
         word = ocr_output.Text;
         confidence = ocr_output.CharacterConfidences;
+        
+        disp(word);
+        disp(confidence);
+        input('press enter');
+        
         for j= 1:size(word,2)
             if(~isnan(confidence(j)))
                 if(confidence(j)<0.3)
