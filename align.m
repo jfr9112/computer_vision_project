@@ -155,7 +155,7 @@ function im_aligned = align(fileName, downSampleFactor)
     end
     
     num_bot_centers = size(bot_centers_x);
-    disp(num_bot_centers);
+
 %     
 %     weekend = 0;
 %     if(num_bot_centers(2) > 12)
@@ -163,11 +163,7 @@ function im_aligned = align(fileName, downSampleFactor)
 %         weekend = 1;
 %     end
 
-    if num_bot_centers(2) < 5
-       disp("Found less than 5 centers in the bottom row, exiting");
-       im_aligned = 1;
-       return
-    end
+    
     
     standard_dev_x = std(bot_centers_x);
     standard_dev_y = std(bot_centers_y);

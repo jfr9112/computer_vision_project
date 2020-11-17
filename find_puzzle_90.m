@@ -6,7 +6,7 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     
     im_gray = im_gray_full_size(1:downSampleFactor:end, 1:downSampleFactor:end);
     
-    [im_width, im_height] = size(im_gray);
+    [im_height, im_width] = size(im_gray);
     
     b_im = im_gray < 0.65; % Chosen from histogram, TO_DO automate
     
@@ -27,22 +27,95 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     % automatically scale the radius range for whatever size image assuming
     % any given image is approximately the same amount of newspaper.
     area = im_width * im_height;
-    min_rad = round( ( (55 * sqrt(area)) / sqrt(4960 * 6864) ) );
+    min_rad = round( ( (40 * sqrt(area)) / sqrt(4960 * 6864) ) );
     max_rad = round( ( (120 * sqrt(area)) / sqrt(4960 * 6864) ) );
     
     
-    [centers, radii, metric] = imfindcircles(~b_im, [min_rad, max_rad], 'Sensitivity', 0.84);
+    [centers, radii, ~] = imfindcircles(~b_im, [min_rad, max_rad], 'Sensitivity', 0.84);
+    [num_centers, ~] = size(centers);
     %toc
     
-    
+    % Lots of distances will be measured in terms of average radii because
+    % images will be different resolutions so we cannot always count in
+    % pixels. However because we are automatically downsampling pixel
+    % values are accurate enough for some very very lenient usages.
+    avg_radii = mean(radii);
     
     if show_stuff == 1
         imshow(b_im);
         hold on;
         viscircles(centers, radii, 'EdgeColor', 'r');
     end
-    % disp(size(centers));
-    [num_centers, ignore] = size(centers);
+    
+    % Since the main way we orient the puzzle is based on the bottom row of
+    % circles we need to remove any circles below that row for the rest of
+    % the code to run smoothly
+    most_x = 0;
+    best_x = -1;
+    x_centers = [];
+    most_y = 0;
+    best_y = -1;
+    y_centers = [];
+    for i = 1:round(avg_radii/3):im_width
+        % number of centers within two radii of the line at x = i
+        l_centers_on = abs(centers(:, 1) - i) < (avg_radii);
+        [num_found, ~] = size(find(l_centers_on));
+        if (num_found > most_x)
+            most_x = num_found;
+            best_x = i;
+            x_centers = l_centers_on;
+        end
+    end
+    
+    for i = 1:round(avg_radii/3):im_height
+        % number of centers within two radii of the line at y = i
+        l_centers_on = abs(centers(:, 2) - i) < (avg_radii);
+        [num_found, ~] = size(find(l_centers_on));
+        if (num_found > most_y)
+            most_y = num_found;
+            best_y = i;
+            y_centers = l_centers_on;
+        end
+    end
+    
+    if (most_x > most_y)
+        l_greater = centers(:,1) > best_x;
+        [num_greater, ~] = size(find(l_greater & ~x_centers));
+        num_less = num_centers - (num_greater + sum(x_centers(:)));
+        chosen_centers = x_centers;
+    else
+        l_greater = centers(:,2) > best_y;
+        [num_greater, ~] = size(find(l_greater & ~y_centers));
+        num_less = num_centers - (num_greater + sum(y_centers(:)));
+        chosen_centers = y_centers;
+    end
+
+    
+    % Remove all circles to the side of the chosen line with fewer circles
+    % excluding those which fell on the line
+    if num_less > num_greater
+        new_centers = centers( (~l_greater) | chosen_centers, :);
+        radii = radii( (~l_greater) | chosen_centers);
+    else
+        new_centers = centers( l_greater | chosen_centers, :);
+        radii = radii( l_greater | chosen_centers);
+    end
+    centers = new_centers;
+    
+    
+    % Set these values again after removing some circles
+    %disp(num_centers);
+    [num_centers, ~] = size(centers);
+    %disp(num_centers);
+    avg_radii = mean(radii);
+    
+    if show_stuff == 1
+        close all;
+        imshow(b_im);
+        hold on;
+        viscircles(centers, radii, 'EdgeColor', 'r');
+    end
+    
     x = centers(1, 1);
     y = centers(1, 2);
     % Highest, Lowest, Leftmost, Rightmost 
@@ -133,16 +206,35 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
         hit = 0;
     end
     
+    bot_centers = [bot_centers_x; bot_centers_y]';
     num_bot_centers = size(bot_centers_x);
+    
+    [~,indecies_of_bot_centers,~] = intersect(centers,bot_centers,'rows');
+    bot_radii = radii(indecies_of_bot_centers);
+    avg_bot_radii = mean(bot_radii);
+    
+    
+    
+    if num_bot_centers(2) < 5
+       disp("Found less than 5 centers in the bottom row, exiting");
+       im_puzzle = 1;
+       weekend = 0;
+       return
+    end
+    
     weekend = 0;
-    if(num_bot_centers(2) > 12)
+    if((num_bot_centers(2) > 12) & (avg_bot_radii < avg_radii))
         disp("This is a weekend puzzle")
         weekend = 1;
     end
     
-    % Distance from top cirlce to top of puzzle
-    % needs to be in terms of circle radii
-    avg_radii = mean(radii);
+    
+    
+    if (weekend == 0)
+        % On weekdays the radius we want is the same as the bottom row
+        % radius so we can avoid some error from erroneous small circles
+        avg_radii = avg_bot_radii;
+    end
     
     top_margin = 10 * avg_radii;
     % Distance from other extrema circles to corresponding edge of puzzle
@@ -154,8 +246,28 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
        top2bot = 32;
     end
     
+    % Find centers of similar radius to bottom row
+    %
+    % Using these we can avoid finding a small circle to the sides of the
+    % puzzle to determinte the height of the crop window
+    centers_of_avg_radius = (1:num_centers);
+    if (weekend == 0)
+        smallest_rad = min(radii);
+        largest_rad = max(radii);
+        rad_range = largest_rad - smallest_rad;
+        rad_minus_smallest = radii - smallest_rad;
+        normalized_rad = rad_minus_smallest / rad_range;
+        normalized_avg_rad = (avg_radii - smallest_rad) / rad_range;
     
+        dist_from_avg_rad = abs(normalized_avg_rad - normalized_rad);
     
+        centers_of_avg_radius = find(dist_from_avg_rad < 0.3);
+    end
+    
+    % circles for ones that are of similar radius to the bottom row
+    if (show_stuff == 1)
+        viscircles(centers(centers_of_avg_radius, :), 8 + radii(centers_of_avg_radius), 'Color', 'm');
+    end
     
     crop_rect_save = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
     margin_mat = [0, 0, 0, 0];
@@ -169,22 +281,23 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
             % Adjust top end to be based on distance from bottom, rather
             % than highest circle
             center_extrema(2) = center_extrema(1) + (top2bot * avg_radii);
-            dist_from_centers = abs(centers(:,2) - center_extrema(2));
+
+            dist_from_centers = abs(centers(centers_of_avg_radius,2) - center_extrema(2));
             target = min(dist_from_centers);
             cntr_indx = find(dist_from_centers == target, 1, 'first');
-            center_extrema(2) = centers(cntr_indx,2);
+            center_extrema(2) = centers(centers_of_avg_radius(cntr_indx),2);
             
             % Adjust sides to only be based on circles along the bottom
             center_extrema(3) = min(bot_centers_x);
             center_extrema(4) = max(bot_centers_x);
             
             % Left side of bottom is occasionally not far enough left
-            dist_to_centers = abs(center_extrema(1) - centers(:,2));
+            dist_to_centers = abs(center_extrema(1) - centers(centers_of_avg_radius,2));
             dev = std(dist_to_centers);
-            l_close_centers = dist_to_centers < (1.5 * dev);
-            close_centers = centers(l_close_centers, :);
+            l_close_centers = dist_to_centers < (2 * dev);
+            close_centers = centers(centers_of_avg_radius(l_close_centers), :);
             if show_stuff == 1
-                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+                viscircles(close_centers, radii(centers_of_avg_radius(l_close_centers)), 'EdgeColor', 'g');
             end
             center_extrema(4) = max(close_centers(:,1));
             
@@ -196,22 +309,22 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
             % Adjust top end to be based on distance from bottom, rather
             % than highest circle
             center_extrema(1) = center_extrema(2) - (top2bot * avg_radii);
-            dist_from_centers = abs(centers(:,2) - center_extrema(1));
+            dist_from_centers = abs(centers(centers_of_avg_radius,2) - center_extrema(1));
             target = min(dist_from_centers);
             cntr_indx = find(dist_from_centers == target, 1, 'first');
-            center_extrema(1) = centers(cntr_indx,2);
+            center_extrema(1) = centers(centers_of_avg_radius( cntr_indx ),2);
             
             % Adjust sides to only be based on circles along the bottom
             center_extrema(3) = min(bot_centers_x);
             center_extrema(4) = max(bot_centers_x);
             
             % Left side of bottom is occasionally not far enough left
-            dist_to_centers = abs(center_extrema(2) - centers(:,2));
+            dist_to_centers = abs(center_extrema(2) - centers(centers_of_avg_radius,2));
             dev = std(dist_to_centers);
-            l_close_centers = dist_to_centers < (1.5 * dev);
-            close_centers = centers(l_close_centers, :);
+            l_close_centers = dist_to_centers < (2 * dev);
+            close_centers = centers(centers_of_avg_radius(l_close_centers), :);
             if show_stuff == 1
-                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+                viscircles(close_centers, radii(centers_of_avg_radius(l_close_centers)), 'EdgeColor', 'g');
             end
             center_extrema(3) = min(close_centers(:,1));
             
@@ -223,22 +336,22 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
             % Adjust top end to be based on distance from bottom, rather
             % than highest circle
             center_extrema(4) = center_extrema(3) + (top2bot * avg_radii);
-            dist_from_centers = abs(centers(:,1) - center_extrema(4));
+            dist_from_centers = abs(centers(centers_of_avg_radius,1) - center_extrema(4));
             target = min(dist_from_centers);
             cntr_indx = find(dist_from_centers == target, 1, 'first');
-            center_extrema(4) = centers(cntr_indx,1);
+            center_extrema(4) = centers( centers_of_avg_radius(cntr_indx),1);
             
             % Adjust sides to only be based on circles along the bottom
             center_extrema(1) = min(bot_centers_y);
             center_extrema(2) = max(bot_centers_y);
             
             % Left side of bottom is occasionally not far enough left
-            dist_to_centers = abs(center_extrema(3) - centers(:,1));
+            dist_to_centers = abs(center_extrema(3) - centers(centers_of_avg_radius,1));
             dev = std(dist_to_centers);
-            l_close_centers = dist_to_centers < (1.5 * dev);
-            close_centers = centers(l_close_centers, :);
+            l_close_centers = dist_to_centers < (2 * dev);
+            close_centers = centers(centers_of_avg_radius(l_close_centers), :);
             if show_stuff == 1
-                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+                viscircles(close_centers, radii(centers_of_avg_radius(l_close_centers)), 'EdgeColor', 'g');
             end
             center_extrema(1) = min(close_centers(:,2));
             
@@ -250,22 +363,22 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
             % Adjust top end to be based on distance from bottom, rather
             % than highest circle
             center_extrema(3) = center_extrema(4) - (top2bot * avg_radii);
-            dist_from_centers = abs(centers(:,1) - center_extrema(3));
+            dist_from_centers = abs(centers(centers_of_avg_radius,1) - center_extrema(3));
             target = min(dist_from_centers);
             cntr_indx = find(dist_from_centers == target, 1, 'first');
-            center_extrema(3) = centers(cntr_indx,1);
+            center_extrema(3) = centers(centers_of_avg_radius(cntr_indx),1);
             
             % Adjust sides to only be based on circles along the bottom
             center_extrema(1) = min(bot_centers_y);
             center_extrema(2) = max(bot_centers_y);
             
             % Left side of bottom is occasionally not far enough left
-            dist_to_centers = abs(center_extrema(4) - centers(:,1));
+            dist_to_centers = abs(center_extrema(4) - centers(centers_of_avg_radius,1));
             dev = std(dist_to_centers);
-            l_close_centers = dist_to_centers < (1.5 * dev);
-            close_centers = centers(l_close_centers, :);
+            l_close_centers = dist_to_centers < (2 * dev);
+            close_centers = centers(centers_of_avg_radius(l_close_centers), :);
             if show_stuff == 1
-                viscircles(close_centers, radii(l_close_centers), 'EdgeColor', 'g');
+                viscircles(close_centers, radii(centers_of_avg_radius(l_close_centers)), 'EdgeColor', 'g');
             end
             center_extrema(2) = max(close_centers(:,2));
     end

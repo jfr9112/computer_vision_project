@@ -11,40 +11,40 @@ SCAN0114.JPG	yes		yes
 SCAN0115.JPG	yes		yes
 SCAN0116.JPG	yes		no
 SCAN0117.JPG	yes		yes
-SCAN0118.JPG	yes		no			maybe ocr fails due to slight angle?
-SCAN0119.JPG	no					Weekend version ( crop only shows partial puzzle )
-SCAN0123.JPG	no					Weekend version ( crop only shows partial puzzle )
-SCAN0124.JPG	no					Weekend version ( rotates wrong )
-SCAN0125.JPG	no					Weekend version ( crop only shows partial puzzle )
-SCAN0126.JPG	no					Weekend version ( crop only shows partial puzzle )
-SCAN0128.JPG	no					Weekend version ( scan does not contain bottom row or circles )
-SCAN0129.JPG	no					Weekend version ( rotates wrong )	
-SCAN0130.JPG	no					Weekend version ( rotates wrong )
-SCAN0131.JPG	no					Weekend version ( rotates wrong )
-SCAN0132.JPG	no					Weekend version ( rotates wrong )
-SCAN0133.JPG	no					Weekend version ( Bad crop and small angle)
-SCAN0134.JPG	no					Weekend version ( rotates wrong )
+SCAN0118.JPG	yes		no			( slight angle? )
+SCAN0119.JPG	yes		no			Weekend version
+SCAN0123.JPG	yes		no			Weekend version
+SCAN0124.JPG	yes		no			Weekend version
+SCAN0125.JPG	yes		no			Weekend version ( slight angle? )
+SCAN0126.JPG	yes		no			Weekend version 
+SCAN0128.JPG	no					Weekend version ( scan does not contain bottom row of circles ) ( < 5 centers )
+SCAN0129.JPG	yes		no			Weekend version ( top slightly cropped off? )
+SCAN0130.JPG	yes		no			Weekend version ( top slightly cropped off? )
+SCAN0131.JPG	yes		no			Weekend version 
+SCAN0132.JPG	yes		no			Weekend version ( top slightly cropped off? )
+SCAN0133.JPG	no					Weekend version ( Align fails )
+SCAN0134.JPG	yes		no			Weekend version
 SCAN0135.JPG	yes		yes
 SCAN0136.JPG	yes		yes			
 SCAN0137.JPG	yes		yes
 SCAN0138.JPG	yes		yes
 SCAN0139.JPG	yes		yes
-SCAN0140.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0140.JPG	no					Weekend version ( Too many small circles brings down avg radius )
 SCAN0141.JPG	no puzzle
-SCAN0142.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0142.JPG	no					Weekend version ( Too many small circles brings down avg radius )
 SCAN0143.JPG	no puzzle
 SCAN0144.JPG	no puzzle
 SCAN0145.JPG	yes		yes
 SCAN0146.JPG	yes		yes
-SCAN0147.JPG	yes		yes
-SCAN0148.JPG	no					Weekend version ( crop only shows partial puzzle )
-SCAN0149.JPG	no					Weekend version ( crop only shows partial puzzle )
+SCAN0147.JPG	no					This one previously worked, but after adding the circle removal part a bunch of small circles make it delete the wrong portion.
+SCAN0148.JPG	yes		no			Weekend version ( top stlightly cropped off? )
+SCAN0149.JPG	no					Weekend version ( all centers have radius close to avg )
 SCAN0150.JPG	yes		yes
 SCAN0151.JPG	no puzzle 
-SCAN0152.JPG	yes		no			maybe ocr fails due to slight angle?
-SCAN0153.JPG	no					cuts off top, perhaps rounded down to second row?
+SCAN0152.JPG	yes		no			( slight angle? )
+SCAN0153.JPG	no		yes			cuts off top, perhaps rounded down to second row?
 SCAN0154.JPG	yes		yes
-SCAN0155.JPG	yes		no			maybe ocr fails due to slight angle?
+SCAN0155.JPG	yes		no			( slight angle? )
 SCAN0156.JPG	yes		yes
 SCAN0157.JPG	yes		yes
 SCAN0158.JPG	yes		yes

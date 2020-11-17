@@ -20,6 +20,7 @@ function project(input_path)
     end
     
     % Can't downsample by 0
+    
     downSampleFactor = max(round(downSampleFactor), 1);
     
     im_aligned = align(input_path, downSampleFactor);
@@ -36,6 +37,12 @@ function project(input_path)
     
     hold off;
     [im_puzzle, weekend] = find_puzzle_90(im_aligned, downSampleFactor);
+    if(im_puzzle == 1)
+        disp("No puzzle detected");
+        return 
+    end
+   
+    
     if show_stuff == 1
         close all;
         imshow(im_puzzle);
