@@ -54,7 +54,7 @@ function project(input_path)
     right = 0.5;
     if (weekend == 1)
        right = 0.45;
-       top = 0.145;
+       top = 0.136;
     end
     im_small = im_puzzle(  round(top * h):round(bot * h), 1:round(right * w), : );
     if show_stuff == 1
