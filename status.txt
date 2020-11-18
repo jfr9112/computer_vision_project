@@ -1,48 +1,50 @@
-SCAN0107.JPG	yes
-SCAN0108.JPG	no (due to nose?)
-SCAN0109.JPG	yes
-SCAN0110.JPG	no
-SCAN0111.JPG	no
-SCAN0112.JPG	yes
-SCAN0113.JPG	no (doesnt even run ocr.m)
-SCAN0114.JPG	no (crops correctly, real close to rhs)
-SCAN0115.JPG	no
-SCAN0116.JPG	no
-SCAN0117.JPG	yes
-SCAN0118.JPG	no (crashes in align.m)
-SCAN0119.JPG	no (crashes in align.m)
-SCAN0123.JPG	no (crashes in align.m)
-SCAN0124.JPG	no (crashes in align.m)
-SCAN0125.JPG	no (crashes in align.m)
-SCAN0126.JPG	no (crashes in align.m)
-SCAN0128.JPG	no (crashes in align.m)
-SCAN0129.JPG	no (crashes in align.m)
-SCAN0130.JPG
-SCAN0131.JPG
-SCAN0132.JPG
-SCAN0133.JPG
-SCAN0134.JPG
-SCAN0135.JPG
-SCAN0136.JPG
-SCAN0137.JPG
-SCAN0138.JPG
-SCAN0139.JPG
-SCAN0140.JPG
-SCAN0141.JPG
-SCAN0142.JPG
-SCAN0143.JPG
-SCAN0144.JPG
-SCAN0145.JPG
-SCAN0146.JPG
-SCAN0147.JPG
-SCAN0148.JPG
-SCAN0149.JPG
-SCAN0150.JPG
-SCAN0151.JPG
-SCAN0152.JPG
-SCAN0153.JPG
-SCAN0154.JPG
-SCAN0155.JPG
-SCAN0156.JPG
-SCAN0157.JPG
-SCAN0158.JPG
+file_name	cropping	ocr			notes
+
+SCAN0107.JPG	yes		yes
+SCAN0108.JPG	yes		yes
+SCAN0109.JPG	yes		yes
+SCAN0110.JPG	yes		yes
+SCAN0111.JPG	yes		yes
+SCAN0112.JPG	yes		yes
+SCAN0113.JPG	yes		yes
+SCAN0114.JPG	yes		yes
+SCAN0115.JPG	yes		yes
+SCAN0116.JPG	yes		yes
+SCAN0117.JPG	yes		yes
+SCAN0118.JPG	yes		no			( slight angle? )
+SCAN0119.JPG	yes		no			Weekend version
+SCAN0123.JPG	yes		no			Weekend version
+SCAN0124.JPG	yes		no			Weekend version
+SCAN0125.JPG	yes		no			Weekend version ( slight angle? )
+SCAN0126.JPG	yes		no			Weekend version 
+SCAN0128.JPG	no					Weekend version ( scan does not contain bottom row of circles ) ( < 5 centers )
+SCAN0129.JPG	yes		no			Weekend version ( top slightly cropped off? )
+SCAN0130.JPG	yes		no			Weekend version ( top slightly cropped off? )
+SCAN0131.JPG	yes		no			Weekend version 
+SCAN0132.JPG	yes		no			Weekend version ( top slightly cropped off? )
+SCAN0133.JPG	no					Weekend version ( Align fails )
+SCAN0134.JPG	yes		no			Weekend version
+SCAN0135.JPG	yes		yes
+SCAN0136.JPG	yes		yes			
+SCAN0137.JPG	yes		yes
+SCAN0138.JPG	yes		yes
+SCAN0139.JPG	yes		yes
+SCAN0140.JPG	no					Weekend version ( Too many small circles brings down avg radius )
+SCAN0141.JPG	no puzzle
+SCAN0142.JPG	no					Weekend version ( Too many small circles brings down avg radius )
+SCAN0143.JPG	no puzzle
+SCAN0144.JPG	no puzzle
+SCAN0145.JPG	yes		yes
+SCAN0146.JPG	yes		yes
+SCAN0147.JPG	no					This one previously worked, but after adding the circle removal part a bunch of small circles make it delete the wrong portion.
+SCAN0148.JPG	yes		no			Weekend version ( top stlightly cropped off? )
+SCAN0149.JPG	no					Weekend version ( all centers have radius close to avg )
+SCAN0150.JPG	yes		yes
+SCAN0151.JPG	no puzzle 
+SCAN0152.JPG	yes		no			( slight angle? )
+SCAN0153.JPG	no		yes			cuts off top, perhaps rounded down to second row?
+SCAN0154.JPG	yes		yes
+SCAN0155.JPG	yes		no			( slight angle? )
+SCAN0156.JPG	yes		yes
+SCAN0157.JPG	yes		yes
+SCAN0158.JPG	yes		yes
