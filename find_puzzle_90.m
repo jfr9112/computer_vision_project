@@ -220,7 +220,6 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     end
     
     
-    
     if (weekend == 0)
         % On weekdays the radius we want is the same as the bottom row
         % radius so we can avoid some error from erroneous small circles

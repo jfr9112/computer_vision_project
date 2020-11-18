@@ -2,7 +2,6 @@
 % desired orientation
 function im_aligned = align(fileName, downSampleFactor)
     im_rgb = im2double(imread(fileName));
-    %im_rgb = imrotate(im_rgb, 90 * 0);
     imshow(im_rgb);
     im_gray_full_size = im_rgb(:,:,2); % Green channel
     
@@ -13,15 +12,7 @@ function im_aligned = align(fileName, downSampleFactor)
     
     b_im = im_gray < 0.65; % Chosen from histogram, TO_DO automate
     
-    %structuring_element_h = strel('rectangle', [2, 5]);
-    %structuring_element_v = strel('rectangle', [5, 2]);
-    
-    %b_im_opened_h = imopen(b_im, structuring_element_h);
-    %b_im_opened_v = imopen(b_im, structuring_element_v);
-    
-    %b_im_opened = b_im_opened_h & b_im_opened_v;
     b_im_opened = b_im;
-    %tic
     
     % Radius range
     % A = 4960 * 6864
@@ -118,6 +109,7 @@ function im_aligned = align(fileName, downSampleFactor)
   
 
     % Need to adjust slight angles
+    % Find all center coords along bottom row
     bot_centers_x = [];
     bot_centers_y = [];
     hit = 0;
@@ -227,13 +219,12 @@ function im_aligned = align(fileName, downSampleFactor)
                 angle_direction = -1;
             end
     end
-        
+    
+    % Calculate angle along bottom row
     small_angle = 90 - rad2deg(atan((max_big - min_big)/(max_small - min_small)));
     angle = small_angle * angle_direction;
     
     im_aligned = imrotate(im_gray_full_size, angle , 'nearest', 'crop');
-    %im_aligned = [im_aligned weekend];
-    %im_and_weekend
 end
 
 
