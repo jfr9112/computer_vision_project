@@ -1,7 +1,7 @@
 % Assumes the puzzle is rotated by some multiple of 90 degrees from the 
 % desired orientation
 function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFactor)
-    show_stuff = 1;
+    show_stuff = 0;
     im_gray_full_size = aligned_gray_image;
     
     im_gray = im_gray_full_size(1:downSampleFactor:end, 1:downSampleFactor:end);
@@ -9,15 +9,6 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     [im_height, im_width] = size(im_gray);
     
     b_im = im_gray < 0.65; % Chosen from histogram, TO_DO automate
-    
-%     structuring_element_h = strel('rectangle', [2, 5]);
-%     structuring_element_v = strel('rectangle', [5, 2]);
-%     
-%     b_im_opened_h = imopen(b_im, structuring_element_h);
-%     b_im_opened_v = imopen(b_im, structuring_element_v);
-%     
-%     b_im_opened = b_im_opened_h & b_im_opened_v;
-    %tic
     
     % Radius range
     % A = 4960 * 6864
@@ -33,7 +24,6 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     
     [centers, radii, ~] = imfindcircles(~b_im, [min_rad, max_rad], 'Sensitivity', 0.84);
     [num_centers, ~] = size(centers);
-    %toc
     
     % Lots of distances will be measured in terms of average radii because
     % images will be different resolutions so we cannot always count in
@@ -104,9 +94,7 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     
     
     % Set these values again after removing some circles
-    %disp(num_centers);
     [num_centers, ~] = size(centers);
-    %disp(num_centers);
     avg_radii = mean(radii);
     
     if show_stuff == 1
@@ -139,6 +127,7 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
         end
     end
     
+    % Draw bounding box for all circles
     if(show_stuff == 1)
         line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'red');
         line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'red');
@@ -166,12 +155,12 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
         end
     end
     
-    %disp(num_on_extrema)
-    
+    % The extrema with the most circles is the bottom because the bottom
+    % row is full of circles
     l_bottom_indx = max(num_on_extrema) == num_on_extrema;
     bottom_indx = find(l_bottom_indx, 1, 'first');
     
-    % Count number of circles along the bottom row
+    % Get all of the circles along the bottom row
     bot_centers_x = [];
     bot_centers_y = [];
     hit = 0;
@@ -209,12 +198,13 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     bot_centers = [bot_centers_x; bot_centers_y]';
     num_bot_centers = size(bot_centers_x);
     
+    % Average radius along the bottom row
     [~,indecies_of_bot_centers,~] = intersect(centers,bot_centers,'rows');
     bot_radii = radii(indecies_of_bot_centers);
     avg_bot_radii = mean(bot_radii);
     
     
-    
+    % Checking if there is a puzzle
     if num_bot_centers(2) < 5
        disp("Found less than 5 centers in the bottom row, exiting");
        im_puzzle = 1;
@@ -222,6 +212,7 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
        return
     end
     
+    % Checking if the puzzle is a weekend puzzle
     weekend = 0;
     if((num_bot_centers(2) > 12) & (avg_bot_radii < avg_radii))
         disp("This is a weekend puzzle")
@@ -236,12 +227,13 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
         avg_radii = avg_bot_radii;
     end
     
+    % theses numbers were obtained experimentally
     top_margin = 10 * avg_radii;
     % Distance from other extrema circles to corresponding edge of puzzle
     other_margin = (100/65) * avg_radii;
     
     % The top circle is (experimentally) 19 radii above the bottom circle
-    top2bot = 20;
+    top2bot = 20; % but we found 20 to work better
     if (weekend == 1)
        top2bot = 32;
     end
@@ -270,7 +262,9 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     end
     
     crop_rect_save = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
-    margin_mat = [0, 0, 0, 0];
+    % matrix representing the distance from the bounding box to the actual
+    % edges of the puzzle
+    margin_mat = [0, 0, 0, 0];  
     rotation_angle = 0;
     switch bottom_indx
         case 1
@@ -386,6 +380,7 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     
     crop_rect = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
     
+    % Draw new bounding box
     if (show_stuff == 1)
         line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'green');
         line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'green');
