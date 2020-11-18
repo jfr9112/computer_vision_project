@@ -11,40 +11,40 @@ SCAN0114.JPG	yes		yes
 SCAN0115.JPG	yes		yes
 SCAN0116.JPG	yes		yes
 SCAN0117.JPG	yes		yes
-SCAN0118.JPG	yes		no			( slight angle? )
-SCAN0119.JPG	yes		no			Weekend version
-SCAN0123.JPG	yes		no			Weekend version
-SCAN0124.JPG	yes		no			Weekend version
-SCAN0125.JPG	yes		no			Weekend version ( slight angle? )
-SCAN0126.JPG	yes		no			Weekend version 
-SCAN0128.JPG	no					Weekend version ( scan does not contain bottom row of circles ) ( < 5 centers )
-SCAN0129.JPG	yes		no			Weekend version ( top slightly cropped off? )
-SCAN0130.JPG	yes		no			Weekend version ( top slightly cropped off? )
-SCAN0131.JPG	yes		no			Weekend version 
-SCAN0132.JPG	yes		no			Weekend version ( top slightly cropped off? )
-SCAN0133.JPG	no					Weekend version ( Align fails )
-SCAN0134.JPG	yes		no			Weekend version
+SCAN0118.JPG	yes		no			due to slight angle
+SCAN0119.JPG	yes		yes			
+SCAN0123.JPG	yes		yes
+SCAN0124.JPG	yes		yes
+SCAN0125.JPG	yes		yes
+SCAN0126.JPG	yes		yes
+SCAN0128.JPG	no		-			scan does not contain bottom row of circles
+SCAN0129.JPG	yes		no			Weekend version (misses 1 horizontal line for unknown reasons)
+SCAN0130.JPG	yes		yes
+SCAN0131.JPG	yes		yes
+SCAN0132.JPG	yes		yes
+SCAN0133.JPG	no		-			Weekend version ( Align fails )
+SCAN0134.JPG	yes		yes
 SCAN0135.JPG	yes		yes
 SCAN0136.JPG	yes		yes			
 SCAN0137.JPG	yes		yes
 SCAN0138.JPG	yes		yes
 SCAN0139.JPG	yes		yes
-SCAN0140.JPG	no					Weekend version ( Too many small circles brings down avg radius )
-SCAN0141.JPG	no puzzle
-SCAN0142.JPG	no					Weekend version ( Too many small circles brings down avg radius )
-SCAN0143.JPG	no puzzle
-SCAN0144.JPG	no puzzle
+SCAN0140.JPG	no		-			Weekend version ( Too many small circles brings down avg radius )
+SCAN0141.JPG	no puzzle	-
+SCAN0142.JPG	no		-			Weekend version ( Too many small circles brings down avg radius )
+SCAN0143.JPG	no puzzle	-
+SCAN0144.JPG	no puzzle	-
 SCAN0145.JPG	yes		yes
 SCAN0146.JPG	yes		yes
-SCAN0147.JPG	no					This one previously worked, but after adding the circle removal part a bunch of small circles make it delete the wrong portion.
-SCAN0148.JPG	yes		no			Weekend version ( top stlightly cropped off? )
-SCAN0149.JPG	no					Weekend version ( all centers have radius close to avg )
+SCAN0147.JPG	no		-			This one previously worked, but after adding the circle removal part a bunch of small circles make it delete the wrong portion.
+SCAN0148.JPG	yes		yes
+SCAN0149.JPG	no		-			Weekend version ( all centers have radius close to avg )
 SCAN0150.JPG	yes		yes
-SCAN0151.JPG	no puzzle 
-SCAN0152.JPG	yes		no			( slight angle? )
-SCAN0153.JPG	no		yes			cuts off top, perhaps rounded down to second row?
+SCAN0151.JPG	no puzzle 	-
+SCAN0152.JPG	yes		no			due to slight angle
+SCAN0153.JPG	no		-
 SCAN0154.JPG	yes		yes
-SCAN0155.JPG	yes		no			( slight angle? )
+SCAN0155.JPG	yes		yes
 SCAN0156.JPG	yes		yes
 SCAN0157.JPG	yes		yes
 SCAN0158.JPG	yes		yes

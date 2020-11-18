@@ -65,5 +65,5 @@ function project(input_path)
     %input('');
 
     % Need these to link up
-    optical_character_recognition(im_small);
+    optical_character_recognition(im_small, weekend);
 end
