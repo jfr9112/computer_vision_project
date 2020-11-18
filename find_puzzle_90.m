@@ -140,11 +140,11 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     end
     
     if(show_stuff == 1)
-        line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'green');
-        line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'green');
+        line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'red');
+        line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'red');
         
-        line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'green');
-        line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'green');
+        line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'red');
+        line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'red');
     end
     num_on_extrema = [0,0,0,0];
     for center_num = 1:num_centers
@@ -387,11 +387,11 @@ function [im_puzzle, weekend] = find_puzzle_90(aligned_gray_image, downSampleFac
     crop_rect = [ center_extrema(3), center_extrema(1) , center_extrema(4) - center_extrema(3), center_extrema(2) - center_extrema(1)];
     
     if (show_stuff == 1)
-        line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'red');
-        line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'red');
+        line([1, im_width], [center_extrema(1), center_extrema(1)], 'Color', 'green');
+        line([1, im_width], [center_extrema(2), center_extrema(2)], 'Color', 'green');
         
-        line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'magenta');
-        line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'cyan');
+        line([center_extrema(4), center_extrema(4)], [1, im_height], 'Color', 'green');
+        line( [center_extrema(3), center_extrema(3)], [1, im_height], 'Color', 'green');
     end
     
     crop_parameter = crop_rect + margin_mat;
